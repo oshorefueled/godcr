@@ -1,6 +1,9 @@
 package wallet
 
 import (
+	"math"
+	"strconv"
+
 	"github.com/decred/dcrd/dcrutil"
 	"github.com/raedahgroup/dcrlibwallet"
 )
@@ -162,10 +165,11 @@ func (wal *Wallet) GetMultiWalletInfo() {
 			accts := make([]Account, 0)
 			for acct := iter.Next(); acct != nil; acct = iter.Next() {
 				addr, er := wall.CurrentAddress(acct.Number)
-				if er != nil {
+				if er != nil && acct.Number != math.MaxInt32 {
 					log.Error("Could not get current address for wallet ", id, "account", acct.Number)
 				}
 				accts = append(accts, Account{
+					Number:         strconv.Itoa(int(acct.Number)),
 					Name:           acct.Name,
 					TotalBalance:   dcrutil.Amount(acct.TotalBalance).String(),
 					CurrentAddress: addr,
