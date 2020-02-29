@@ -148,8 +148,8 @@ func (page *Overview) Init(theme *materialplus.Theme, w *wallet.Wallet, states m
 
 // Draw adds all the widgets to the stored layout context.
 func (page *Overview) Draw(gtx *layout.Context) interface{} {
-	page.walletInfo = page.states[StateWalletInfo].(*wallet.MultiWalletInfo)
-	page.transactions = page.states[StateTransactions].(*wallet.Transactions)
+	page.walletInfo = page.initializeState(StateWalletInfo).(*wallet.MultiWalletInfo)
+	page.transactions = page.initializeState(StateTransactions).(*wallet.Transactions)
 	page.update(gtx)
 
 	layout.Stack{}.Layout(gtx,
@@ -163,14 +163,19 @@ func (page *Overview) Draw(gtx *layout.Context) interface{} {
 	return nil
 }
 
-// checkState checks if a state has been added to the state map
-func (page *Overview) checkState(state string) bool {
-	if _, ok := page.states[state]; ok {
-		return true
+func (page *Overview) initializeState(stateID string) interface{} {
+	if state, ok := page.states[stateID]; ok {
+		return state
 	}
-	return false
+	switch stateID {
+	case StateWalletInfo:
+		return &wallet.MultiWalletInfo{}
+	case StateTransactions:
+		return &wallet.Transactions{}
+	default:
+		return nil
+	}
 }
-
 // update updates every dynamic data on the page when the overview page is re-drawn.
 func (page *Overview) update(gtx *layout.Context) {
 	page.updateBalance()
@@ -211,8 +216,8 @@ func (page *Overview) updateSyncStatus() {
 // updateSyncProgressData updates the sync progress of open wallets every time the overview page
 // is redrawn.
 func (page *Overview) updateSyncProgressData() {
-	if page.checkState(StateSyncStatus) {
-		page.walletSyncStatus = page.states[StateSyncStatus].(*wallet.SyncStatus)
+	if state, ok := page.states[StateSyncStatus]; ok {
+		page.walletSyncStatus = state.(*wallet.SyncStatus)
 		page.progress = float64(page.walletSyncStatus.Progress)
 		page.progressPercentage.Text = fmt.Sprintf("%v%%", page.progress)
 		page.timeLeft.Text = fmt.Sprintf("%v left", helper.RemainingSyncTime(page.walletSyncStatus.RemainingTime))
@@ -241,7 +246,7 @@ func (page *Overview) updateWalletSyncBox(gtx *layout.Context) {
 	var overallBlockHeight int32
 
 	page.walletSyncBoxes = []func(){}
-	if page.checkState(StateSyncStatus) {
+	if _, ok := page.states[StateSyncStatus]; ok {
 		overallBlockHeight = page.walletSyncStatus.HeadersToFetch
 	}
 
