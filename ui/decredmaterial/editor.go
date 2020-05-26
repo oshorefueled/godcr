@@ -102,7 +102,7 @@ func (e Editor) Layout(gtx *layout.Context, editor *widget.Editor) {
 	}
 
 	if e.IsRequired && !e.editor.Focused() && e.editor.Len() == 0 {
-		e.ErrorLabel.Text = e.requiredErrorText
+		e.ErrorLabel.Text = "Field is required"
 	}
 
 	layout.UniformInset(unit.Dp(2)).Layout(gtx, func() {
@@ -224,10 +224,6 @@ func (e Editor) handleEvents(gtx *layout.Context) {
 	for e.clearBtnWidget.Clicked(gtx) {
 		e.editor.SetText("")
 	}
-}
-
-func (e *Editor) SetRequiredErrorText(txt string) {
-	e.requiredErrorText = txt
 }
 
 func (e *Editor) SetError(errorText string) {

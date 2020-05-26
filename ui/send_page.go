@@ -119,12 +119,10 @@ func (win *Window) SendPage(common pageCommon) layout.Widget {
 	page.accountsTab.Position = decredmaterial.Top
 
 	page.destinationAddressEditorMaterial = common.theme.Editor("Destination Address")
-	page.destinationAddressEditorMaterial.SetRequiredErrorText("")
 	page.destinationAddressEditorMaterial.IsRequired = true
 	page.destinationAddressEditorMaterial.IsVisible = true
 
 	page.sendAmountEditorMaterial = common.theme.Editor("Amount to be sent")
-	page.sendAmountEditorMaterial.SetRequiredErrorText("")
 	page.sendAmountEditorMaterial.IsRequired = true
 
 	page.closeConfirmationModalButtonMaterial.Background = common.theme.Color.Gray
