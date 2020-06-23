@@ -3,6 +3,7 @@
 package decredmaterial
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 
@@ -13,7 +14,6 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/text"
 	"gioui.org/unit"
-	"gioui.org/widget"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 )
 
@@ -29,6 +29,12 @@ var (
 	//lightblue = rgb(0x70cbff)
 	//orange    = rgb(0xed6d47)
 	green = rgb(0x41bf53)
+)
+
+const (
+	modalTopInset           = 50
+	modalSideInset          = 100
+	estimatedModalRowHeight = 50
 )
 
 type Theme struct {
@@ -94,12 +100,11 @@ func (t *Theme) Modal(gtx *layout.Context, title string, wd []func()) {
 	layout.Stack{}.Layout(gtx,
 		layout.Expanded(func() {
 			fillMax(gtx, overlayColor)
-			new(widget.Button).Layout(gtx)
 		}),
 		layout.Stacked(func() {
 			w := []func(){
 				func() {
-					t.H4(title).Layout(gtx)
+					t.H6(title).Layout(gtx)
 				},
 				func() {
 					line := t.Line()
@@ -109,7 +114,17 @@ func (t *Theme) Modal(gtx *layout.Context, title string, wd []func()) {
 			}
 			w = append(w, wd...)
 
-			layout.UniformInset(unit.Dp(60)).Layout(gtx, func() {
+			estimatedModalHeight := len(w) * estimatedModalRowHeight
+			bottomInset := gtx.Constraints.Height.Max - estimatedModalHeight - modalTopInset
+
+			fmt.Println(bottomInset)
+
+			layout.Inset{
+				Top:    unit.Dp(modalTopInset),
+				Bottom: unit.Dp(100),
+				Left:   unit.Dp(modalSideInset),
+				Right:  unit.Dp(modalSideInset),
+			}.Layout(gtx, func() {
 				fillMax(gtx, t.Color.Surface)
 				(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(w), func(i int) {
 					layout.UniformInset(unit.Dp(10)).Layout(gtx, w[i])
