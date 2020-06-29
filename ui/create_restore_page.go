@@ -88,6 +88,9 @@ type createRestore struct {
 	autoCompleteList *layout.List
 
 	seedSuggestions []seedSuggestions
+
+	createModal  *decredmaterial.Modal
+	warningModal *decredmaterial.Modal
 }
 
 // Loading lays out the loading widget with a faded background
@@ -118,6 +121,8 @@ func (win *Window) CreateRestorePage(common pageCommon) layout.Widget {
 		addWallet:             common.theme.Button("create wallet"),
 		hideResetModal:        common.theme.Button("cancel"),
 		suggestionLimit:       3,
+		createModal:           common.theme.Modal(),
+		warningModal:          common.theme.Modal(),
 	}
 
 	pg.matchSpendingPasswordWidget.SingleLine = true
@@ -237,7 +242,7 @@ func (pg *createRestore) layout(common pageCommon) {
 					)
 				},
 			}
-			pg.theme.Modal(pg.gtx, modalTitle, w)
+			pg.createModal.Layout(pg.gtx, modalTitle, w)
 		}
 
 		if pg.showWarning {
@@ -270,8 +275,7 @@ func (pg *createRestore) layout(common pageCommon) {
 					})
 				},
 			}
-
-			pg.theme.Modal(pg.gtx, modalTitle, w)
+			pg.warningModal.Layout(pg.gtx, modalTitle, w)
 		}
 	})
 }

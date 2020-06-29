@@ -3,7 +3,6 @@
 package decredmaterial
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 
@@ -91,47 +90,6 @@ func NewTheme() *Theme {
 	t.chevronDownIcon = mustIcon(NewIcon(icons.NavigationExpandMore))
 
 	return t
-}
-
-func (t *Theme) Modal(gtx *layout.Context, title string, wd []func()) {
-	overlayColor := t.Color.Black
-	overlayColor.A = 200
-
-	layout.Stack{}.Layout(gtx,
-		layout.Expanded(func() {
-			fillMax(gtx, overlayColor)
-		}),
-		layout.Stacked(func() {
-			w := []func(){
-				func() {
-					t.H6(title).Layout(gtx)
-				},
-				func() {
-					line := t.Line()
-					line.Width = gtx.Constraints.Width.Max
-					line.Layout(gtx)
-				},
-			}
-			w = append(w, wd...)
-
-			estimatedModalHeight := len(w) * estimatedModalRowHeight
-			bottomInset := gtx.Constraints.Height.Max - estimatedModalHeight - modalTopInset
-
-			fmt.Println(bottomInset)
-
-			layout.Inset{
-				Top:    unit.Dp(modalTopInset),
-				Bottom: unit.Dp(100),
-				Left:   unit.Dp(modalSideInset),
-				Right:  unit.Dp(modalSideInset),
-			}.Layout(gtx, func() {
-				fillMax(gtx, t.Color.Surface)
-				(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(w), func(i int) {
-					layout.UniformInset(unit.Dp(10)).Layout(gtx, w[i])
-				})
-			})
-		}),
-	)
 }
 
 func (t *Theme) Background(gtx *layout.Context, w layout.Widget) {

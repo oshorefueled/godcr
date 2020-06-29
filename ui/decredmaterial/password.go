@@ -19,6 +19,8 @@ type Password struct {
 
 	cancelButtonMaterial Button
 	cancelButtonWidget   *widget.Button
+
+	modal *Modal
 }
 
 // Password initializes and returns an instance of Password
@@ -37,6 +39,8 @@ func (t *Theme) Password() *Password {
 
 		cancelButtonWidget:  new(widget.Button),
 		confirmButtonWidget: new(widget.Button),
+
+		modal: t.Modal(),
 	}
 
 	p.passwordEditorWidget = &editor.Editor{
@@ -83,7 +87,7 @@ func (p *Password) Layout(gtx *layout.Context, confirm func([]byte), cancel func
 			})
 		},
 	}
-	p.theme.Modal(gtx, "Enter password to confirm", widgets)
+	p.modal.Layout(gtx, "Enter password to confirm", widgets)
 }
 
 func (p *Password) updateColors() {

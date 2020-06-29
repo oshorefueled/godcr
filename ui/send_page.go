@@ -52,6 +52,8 @@ type SendPage struct {
 	closeConfirmationModalButtonMaterial decredmaterial.Button
 	confirmButtonMaterial                decredmaterial.Button
 
+	confirmModal *decredmaterial.Modal
+
 	copyIconMaterial decredmaterial.IconButton
 	currencySwap     decredmaterial.IconButton
 
@@ -134,6 +136,8 @@ func (win *Window) SendPage(common pageCommon) layout.Widget {
 		confirmButtonMaterial:                common.theme.Button("Confirm"),
 
 		copyIconMaterial: common.theme.IconButton(mustIcon(decredmaterial.NewIcon(icons.ContentContentCopy))),
+
+		confirmModal: common.theme.Modal(),
 
 		isConfirmationModalOpen:   false,
 		isPasswordModalOpen:       false,
@@ -545,7 +549,7 @@ func (pg *SendPage) drawConfirmationModal(c pageCommon) {
 			)
 		},
 	}
-	pg.theme.Modal(gtx, "Confirm Send Transaction", w)
+	pg.confirmModal.Layout(gtx, "Confirm Send Transaction", widgets)
 }
 
 func (pg *SendPage) drawPasswordModal(c pageCommon) {
