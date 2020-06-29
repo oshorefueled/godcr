@@ -88,7 +88,7 @@ func (m *Modal) Layout(gtx *layout.Context, title string, widgets []func()) {
 			} else {
 				inset = layout.Inset{
 					Top:    unit.Dp(modalTopInset),
-					Bottom: unit.Px(float32(maxHeight - m.contentHeight - modalTopInset - 20)),
+					Bottom: unit.Dp(float32(maxHeight - m.contentHeight - modalTopInset - 20)),
 					Left:   unit.Dp(modalSideInset),
 					Right:  unit.Dp(modalSideInset),
 				}
