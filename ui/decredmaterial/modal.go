@@ -44,7 +44,6 @@ func (m *Modal) calculateWidgetHeight(gtx *layout.Context) int {
 
 func (m *Modal) Layout(gtx *layout.Context, title string, widgets []func()) {
 	contentHeight := 0
-	maxHeight := gtx.Dimensions.Size.Y
 
 	layout.Stack{}.Layout(gtx,
 		layout.Expanded(func() {
@@ -86,13 +85,13 @@ func (m *Modal) Layout(gtx *layout.Context, title string, widgets []func()) {
 				}
 				m.hasCalculatedeight = true
 			} else {
-				inset = layout.Inset{
-					Top:    unit.Dp(modalTopInset),
-					Bottom: unit.Dp(float32(maxHeight - m.contentHeight - modalTopInset - 20)),
-					Left:   unit.Dp(modalSideInset),
-					Right:  unit.Dp(modalSideInset),
-				}
-				inset.Layout(gtx, func() {
+				layout.Inset{
+					Top:   unit.Dp(modalTopInset),
+					Left:  unit.Dp(modalSideInset),
+					Right: unit.Dp(modalSideInset),
+				}.Layout(gtx, func() {
+					gtx.Constraints.Height.Max = m.contentHeight
+					gtx.Constraints.Height.Min = m.contentHeight
 					fillMax(gtx, m.backgroundColor)
 					(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(widgetsFuncs), func(i int) {
 						layout.UniformInset(unit.Dp(m.widgetItemPadding/2)).Layout(gtx, widgetsFuncs[i])
