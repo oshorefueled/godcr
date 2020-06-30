@@ -12,6 +12,7 @@ type Modal struct {
 	titleSeparator *Line
 
 	contentHeight      int
+	joinInset          float32
 	hasCalculatedeight bool
 
 	overlayColor    color.RGBA
@@ -43,6 +44,39 @@ func (m *Modal) calculateWidgetHeight(gtx *layout.Context) int {
 }
 
 func (m *Modal) Layout(gtx *layout.Context, title string, widgets []func()) {
+	layout.Stack{}.Layout(gtx,
+		layout.Expanded(func() {
+			fillMax(gtx, m.overlayColor)
+		}),
+		layout.Stacked(func() {
+			widgetFuncs := []func(){
+				func() {
+					m.titleLabel.Text = title
+					m.titleLabel.Layout(gtx)
+				},
+				func() {
+					m.titleSeparator.Width = gtx.Constraints.Width.Max
+					m.titleSeparator.Layout(gtx)
+				},
+			}
+			widgetFuncs = append(widgetFuncs, widgets...)
+
+			layout.Inset{
+				Top:   unit.Dp(modalTopInset),
+				Left:  unit.Dp(modalSideInset),
+				Right: unit.Dp(modalSideInset),
+			}.Layout(gtx, func() {
+				(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(widgetFuncs), func(i int) {
+					gtx.Constraints.Width.Min = gtx.Constraints.Width.Max
+					fillMax(gtx, m.backgroundColor)
+					layout.UniformInset(unit.Dp(10)).Layout(gtx, widgetFuncs[i])
+				})
+			})
+		}),
+	)
+}
+
+func (m *Modal) Layoutw(gtx *layout.Context, title string, widgets []func()) {
 	contentHeight := 0
 
 	layout.Stack{}.Layout(gtx,
@@ -86,12 +120,12 @@ func (m *Modal) Layout(gtx *layout.Context, title string, widgets []func()) {
 				m.hasCalculatedeight = true
 			} else {
 				layout.Inset{
-					Top:   unit.Dp(modalTopInset),
-					Left:  unit.Dp(modalSideInset),
-					Right: unit.Dp(modalSideInset),
+					Top:   unit.Px(modalTopInset),
+					Left:  unit.Px(modalSideInset),
+					Right: unit.Px(modalSideInset),
 				}.Layout(gtx, func() {
-					gtx.Constraints.Height.Max = m.contentHeight
-					gtx.Constraints.Height.Min = m.contentHeight
+					gtx.Constraints.Height.Max = gtx.Px(unit.Dp(float32(m.contentHeight)))
+					gtx.Constraints.Height.Min = gtx.Px(unit.Dp(float32(m.contentHeight)))
 					fillMax(gtx, m.backgroundColor)
 					(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(widgetsFuncs), func(i int) {
 						layout.UniformInset(unit.Dp(m.widgetItemPadding/2)).Layout(gtx, widgetsFuncs[i])
