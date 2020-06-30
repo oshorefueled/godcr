@@ -564,7 +564,6 @@ func (pg *SendPage) drawPasswordModal(c pageCommon) {
 
 		pg.wallet.BroadcastTransaction(pg.txAuthor, password, pg.broadcastErrChan)
 	}, func() {
-		pg.isConfirmationModalOpen = true
 		pg.isPasswordModalOpen = false
 	})
 }

@@ -1,6 +1,8 @@
 package decredmaterial
 
 import (
+	"image/color"
+
 	"gioui.org/layout"
 	"gioui.org/unit"
 	"gioui.org/widget"
@@ -26,7 +28,7 @@ type Password struct {
 // Password initializes and returns an instance of Password
 func (t *Theme) Password() *Password {
 	cancelButtonMaterial := t.Button("Cancel")
-	cancelButtonMaterial.Background = t.Color.Surface
+	cancelButtonMaterial.Background = color.RGBA{R: 238, G: 238, B: 238, A: 255}
 	cancelButtonMaterial.Color = t.Color.Primary
 
 	p := &Password{
@@ -87,7 +89,7 @@ func (p *Password) Layout(gtx *layout.Context, confirm func([]byte), cancel func
 			})
 		},
 	}
-	p.modal.Layout(gtx, "Enter password to confirm", 300, widgets)
+	p.modal.Layout(gtx, "Enter password to confirm", 450, widgets)
 }
 
 func (p *Password) updateColors() {
