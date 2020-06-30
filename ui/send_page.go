@@ -246,6 +246,7 @@ func (pg *SendPage) Handle(c pageCommon) {
 
 	for pg.confirmButtonWidget.Clicked(gtx) {
 		pg.sendErrorText = ""
+		pg.isConfirmationModalOpen = false
 		pg.isPasswordModalOpen = true
 	}
 
@@ -549,7 +550,7 @@ func (pg *SendPage) drawConfirmationModal(c pageCommon) {
 			)
 		},
 	}
-	pg.confirmModal.Layout(gtx, "Confirm Send Transaction", widgets)
+	pg.confirmModal.Layout(gtx, "Confirm Send Transaction", 0, widgets)
 }
 
 func (pg *SendPage) drawPasswordModal(c pageCommon) {
@@ -563,6 +564,7 @@ func (pg *SendPage) drawPasswordModal(c pageCommon) {
 
 		pg.wallet.BroadcastTransaction(pg.txAuthor, password, pg.broadcastErrChan)
 	}, func() {
+		pg.isConfirmationModalOpen = true
 		pg.isPasswordModalOpen = false
 	})
 }

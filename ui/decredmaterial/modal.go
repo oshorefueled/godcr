@@ -5,6 +5,7 @@ import (
 
 	"gioui.org/layout"
 	"gioui.org/unit"
+	"gioui.org/widget"
 )
 
 type Modal struct {
@@ -28,10 +29,14 @@ func (t *Theme) Modal() *Modal {
 	}
 }
 
-func (m *Modal) Layout(gtx *layout.Context, title string, widgets []func()) {
+// Layout lays out the modal with specified title and width
+// If the passed width is 0, then a default width is used for the modal
+// If not, the modal assumes the width passed to it
+func (m *Modal) Layout(gtx *layout.Context, title string, width int, widgets []func()) {
 	layout.Stack{}.Layout(gtx,
 		layout.Expanded(func() {
 			fillMax(gtx, m.overlayColor)
+			new(widget.Button).Layout(gtx)
 		}),
 		layout.Stacked(func() {
 			widgetFuncs := []func(){
@@ -46,15 +51,22 @@ func (m *Modal) Layout(gtx *layout.Context, title string, widgets []func()) {
 			}
 			widgetFuncs = append(widgetFuncs, widgets...)
 
-			layout.Inset{
-				Top:   unit.Dp(modalTopInset),
-				Left:  unit.Dp(modalSideInset),
-				Right: unit.Dp(modalSideInset),
-			}.Layout(gtx, func() {
-				(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(widgetFuncs), func(i int) {
-					gtx.Constraints.Width.Min = gtx.Constraints.Width.Max
-					fillMax(gtx, m.backgroundColor)
-					layout.UniformInset(unit.Dp(10)).Layout(gtx, widgetFuncs[i])
+			sidePadding := 130
+			if width > 0 {
+				sidePadding = (gtx.Constraints.Width.Max - width) / 2
+			}
+
+			gtx.Constraints.Height.Min = gtx.Constraints.Height.Max
+			layout.Center.Layout(gtx, func() {
+				layout.Inset{
+					Left:  unit.Px(float32(sidePadding)),
+					Right: unit.Px(float32(sidePadding)),
+				}.Layout(gtx, func() {
+					(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(widgetFuncs), func(i int) {
+						gtx.Constraints.Width.Min = gtx.Constraints.Width.Max
+						fillMax(gtx, m.backgroundColor)
+						layout.UniformInset(unit.Dp(10)).Layout(gtx, widgetFuncs[i])
+					})
 				})
 			})
 		}),

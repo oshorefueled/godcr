@@ -30,12 +30,6 @@ var (
 	green = rgb(0x41bf53)
 )
 
-const (
-	modalTopInset           = 50
-	modalSideInset          = 100
-	estimatedModalRowHeight = 50
-)
-
 type Theme struct {
 	Shaper text.Shaper
 	Color  struct {

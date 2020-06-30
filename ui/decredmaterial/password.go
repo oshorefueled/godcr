@@ -87,7 +87,7 @@ func (p *Password) Layout(gtx *layout.Context, confirm func([]byte), cancel func
 			})
 		},
 	}
-	p.modal.Layout(gtx, "Enter password to confirm", widgets)
+	p.modal.Layout(gtx, "Enter password to confirm", 300, widgets)
 }
 
 func (p *Password) updateColors() {
