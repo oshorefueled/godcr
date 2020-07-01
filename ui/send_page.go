@@ -137,7 +137,7 @@ func (win *Window) SendPage(common pageCommon) layout.Widget {
 
 		copyIconMaterial: common.theme.IconButton(mustIcon(decredmaterial.NewIcon(icons.ContentContentCopy))),
 
-		confirmModal: common.theme.Modal(),
+		confirmModal: common.theme.Modal("Confirm Send Transaction"),
 
 		isConfirmationModalOpen:   false,
 		isPasswordModalOpen:       false,
@@ -534,23 +534,10 @@ func (pg *SendPage) drawConfirmationModal(c pageCommon) {
 				}),
 			)
 		},
-		func() {
-			layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
-				layout.Rigid(func() {
-					pg.confirmButtonMaterial.Layout(gtx, pg.confirmButtonWidget)
-				}),
-				layout.Rigid(func() {
-					inset := layout.Inset{
-						Left: values.MarginPadding5,
-					}
-					inset.Layout(gtx, func() {
-						pg.closeConfirmationModalButtonMaterial.Layout(gtx, pg.closeConfirmationModalButtonWidget)
-					})
-				}),
-			)
-		},
 	}
-	pg.confirmModal.Layout(gtx, "Confirm Send Transaction", 0, widgets)
+	controlMaterials := []decredmaterial.Button{pg.confirmButtonMaterial, pg.closeConfirmationModalButtonMaterial}
+	controlWidgets := []*widget.Button{pg.confirmButtonWidget, pg.closeConfirmationModalButtonWidget}
+	pg.confirmModal.Layout(gtx, widgets, controlMaterials, controlWidgets)
 }
 
 func (pg *SendPage) drawPasswordModal(c pageCommon) {

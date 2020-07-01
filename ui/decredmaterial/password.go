@@ -4,7 +4,6 @@ import (
 	"image/color"
 
 	"gioui.org/layout"
-	"gioui.org/unit"
 	"gioui.org/widget"
 
 	"github.com/raedahgroup/godcr/ui/decredmaterial/editor"
@@ -42,7 +41,7 @@ func (t *Theme) Password() *Password {
 		cancelButtonWidget:  new(widget.Button),
 		confirmButtonWidget: new(widget.Button),
 
-		modal: t.Modal(),
+		modal: t.Modal("Enter password to confirm"),
 	}
 
 	p.passwordEditorWidget = &editor.Editor{
@@ -68,28 +67,11 @@ func (p *Password) Layout(gtx *layout.Context, confirm func([]byte), cancel func
 		func() {
 			p.passwordEditorMaterial.LayoutPasswordEditor(gtx, p.passwordEditorWidget)
 		},
-		func() {
-			inset := layout.Inset{
-				Top: unit.Dp(20),
-			}
-			inset.Layout(gtx, func() {
-				layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
-					layout.Rigid(func() {
-						p.confirmButtonMaterial.Layout(gtx, p.confirmButtonWidget)
-					}),
-					layout.Rigid(func() {
-						inset := layout.Inset{
-							Left: unit.Dp(10),
-						}
-						inset.Layout(gtx, func() {
-							p.cancelButtonMaterial.Layout(gtx, p.cancelButtonWidget)
-						})
-					}),
-				)
-			})
-		},
 	}
-	p.modal.Layout(gtx, "Enter password to confirm", 450, widgets)
+
+	controlMaterials := []Button{p.confirmButtonMaterial, p.cancelButtonMaterial}
+	controlWidgets := []*widget.Button{p.confirmButtonWidget, p.cancelButtonWidget}
+	p.modal.Layout(gtx, widgets, controlMaterials, controlWidgets)
 }
 
 func (p *Password) updateColors() {

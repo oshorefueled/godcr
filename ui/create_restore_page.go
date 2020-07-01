@@ -121,8 +121,8 @@ func (win *Window) CreateRestorePage(common pageCommon) layout.Widget {
 		addWallet:             common.theme.Button("create wallet"),
 		hideResetModal:        common.theme.Button("cancel"),
 		suggestionLimit:       3,
-		createModal:           common.theme.Modal(),
-		warningModal:          common.theme.Modal(),
+		createModal:           common.theme.Modal(""),
+		warningModal:          common.theme.Modal(""),
 	}
 
 	pg.matchSpendingPasswordWidget.SingleLine = true
@@ -206,10 +206,17 @@ func (pg *createRestore) layout(common pageCommon) {
 			}),
 		)
 		if pg.showPassword {
-			modalTitle := "Create Wallet"
+			pg.createModal.SetTitle("Create Wallet")
 			if pg.showRestore {
-				modalTitle = "Restore Wallet"
+				pg.createModal.SetTitle("Restore Wallet")
 			}
+
+			if pg.showRestore {
+				pg.addWallet.Text = "restore wallet"
+			} else {
+				pg.addWallet.Text = "create new wallet"
+			}
+			pg.hidePasswordModal.Color = common.theme.Color.Primary
 
 			w := []func(){
 				func() {
@@ -221,32 +228,15 @@ func (pg *createRestore) layout(common pageCommon) {
 				func() {
 					pg.errLabel.Layout(pg.gtx)
 				},
-				func() {
-					if pg.showRestore {
-						pg.addWallet.Text = "restore wallet"
-					} else {
-						pg.addWallet.Text = "create new wallet"
-					}
-					layout.Flex{Axis: layout.Horizontal}.Layout(pg.gtx,
-						layout.Rigid(func() {
-							layout.UniformInset(values.MarginPadding5).Layout(pg.gtx, func() {
-								pg.addWallet.Layout(pg.gtx, pg.addWalletWidget)
-							})
-						}),
-						layout.Rigid(func() {
-							layout.UniformInset(values.MarginPadding5).Layout(pg.gtx, func() {
-								pg.hidePasswordModal.Color = common.theme.Color.Primary
-								pg.hidePasswordModal.Layout(pg.gtx, pg.hidePasswordModalWidget)
-							})
-						}),
-					)
-				},
 			}
-			pg.createModal.Layout(pg.gtx, modalTitle, 0, w)
+
+			controlMaterials := []decredmaterial.Button{pg.addWallet, pg.hidePasswordModal}
+			controlWidgets := []*widget.Button{pg.addWalletWidget, pg.hidePasswordModalWidget}
+			pg.createModal.Layout(pg.gtx, w, controlMaterials, controlWidgets)
 		}
 
 		if pg.showWarning {
-			modalTitle := "Reset Seed Input"
+			pg.warningModal.SetTitle("Reset Seed Input")
 			var msg = "You are about clearing all the seed input fields. Are you sure you want to proceed with this action?"
 			w := []func(){
 				func() {
@@ -255,27 +245,14 @@ func (pg *createRestore) layout(common pageCommon) {
 					txt.Alignment = text.Middle
 					txt.Layout(pg.gtx)
 				},
-				func() {
-					layout.Center.Layout(pg.gtx, func() {
-
-						layout.Flex{Axis: layout.Horizontal}.Layout(pg.gtx,
-							layout.Rigid(func() {
-								layout.UniformInset(values.MarginPadding5).Layout(pg.gtx, func() {
-									pg.resetSeedFields.Layout(pg.gtx, pg.resetSeedFieldsWidget)
-								})
-							}),
-							layout.Rigid(func() {
-								layout.UniformInset(values.MarginPadding5).Layout(pg.gtx, func() {
-									pg.hidePasswordModal.Background = common.theme.Color.Primary
-									pg.hidePasswordModal.Color = color.RGBA{255, 255, 255, 255}
-									pg.hidePasswordModal.Layout(pg.gtx, pg.hidePasswordModalWidget)
-								})
-							}),
-						)
-					})
-				},
 			}
-			pg.warningModal.Layout(pg.gtx, modalTitle, 0, w)
+			pg.hidePasswordModal.Background = common.theme.Color.Primary
+			pg.hidePasswordModal.Color = color.RGBA{255, 255, 255, 255}
+
+			controlMaterials := []decredmaterial.Button{pg.resetSeedFields, pg.hidePasswordModal}
+			controlWidgets := []*widget.Button{pg.resetSeedFieldsWidget, pg.hidePasswordModalWidget}
+
+			pg.warningModal.Layout(pg.gtx, w, controlMaterials, controlWidgets)
 		}
 	})
 }
