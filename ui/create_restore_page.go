@@ -142,7 +142,6 @@ func (win *Window) CreateRestorePage(common pageCommon) layout.Widget {
 
 	pg.hidePasswordModal = common.theme.Button("cancel")
 	pg.hidePasswordModal.Color = common.theme.Color.Danger
-	pg.hidePasswordModal.Background = color.RGBA{R: 238, G: 238, B: 238, A: 255}
 
 	pg.showresetModal = common.theme.Button("reset")
 	pg.showresetModal.Color = common.theme.Color.Hint
@@ -217,6 +216,7 @@ func (pg *createRestore) layout(common pageCommon) {
 				pg.addWallet.Text = "create new wallet"
 			}
 			pg.hidePasswordModal.Color = common.theme.Color.Primary
+			pg.hidePasswordModal.Background = color.RGBA{R: 238, G: 238, B: 238, A: 255}
 
 			w := []func(){
 				func() {

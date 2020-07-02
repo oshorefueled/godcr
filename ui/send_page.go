@@ -537,7 +537,7 @@ func (pg *SendPage) drawConfirmationModal(c pageCommon) {
 	}
 	controlMaterials := []decredmaterial.Button{pg.confirmButtonMaterial, pg.closeConfirmationModalButtonMaterial}
 	controlWidgets := []*widget.Button{pg.confirmButtonWidget, pg.closeConfirmationModalButtonWidget}
-	pg.confirmModal.Layout(gtx, widgets, controlMaterials, controlWidgets)
+	pg.confirmModal.Layout(gtx, w, controlMaterials, controlWidgets)
 }
 
 func (pg *SendPage) drawPasswordModal(c pageCommon) {
