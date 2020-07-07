@@ -6,14 +6,15 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/raedahgroup/godcr/ui/values"
-
 	"gioui.org/layout"
+	"gioui.org/unit"
 	"gioui.org/widget"
+
 	"github.com/atotto/clipboard"
 	"github.com/decred/dcrd/dcrutil"
 	"github.com/raedahgroup/dcrlibwallet"
 	"github.com/raedahgroup/godcr/ui/decredmaterial"
+	"github.com/raedahgroup/godcr/ui/values"
 	"github.com/raedahgroup/godcr/wallet"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 )
@@ -534,10 +535,22 @@ func (pg *SendPage) drawConfirmationModal(c pageCommon) {
 				}),
 			)
 		},
+		func() {
+			layout.Center.Layout(gtx, func() {
+				layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
+					layout.Rigid(func() {
+						pg.confirmButtonMaterial.Layout(gtx, pg.confirmButtonWidget)
+					}),
+					layout.Rigid(func() {
+						layout.Inset{Left: unit.Dp(5)}.Layout(gtx, func() {
+							pg.closeConfirmationModalButtonMaterial.Layout(gtx, pg.closeConfirmationModalButtonWidget)
+						})
+					}),
+				)
+			})
+		},
 	}
-	controlMaterials := []decredmaterial.Button{pg.confirmButtonMaterial, pg.closeConfirmationModalButtonMaterial}
-	controlWidgets := []*widget.Button{pg.confirmButtonWidget, pg.closeConfirmationModalButtonWidget}
-	pg.confirmModal.Layout(gtx, w, controlMaterials, controlWidgets)
+	pg.confirmModal.Layout(gtx, w, 500)
 }
 
 func (pg *SendPage) drawPasswordModal(c pageCommon) {

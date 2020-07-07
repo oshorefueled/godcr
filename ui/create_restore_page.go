@@ -5,18 +5,17 @@ import (
 	"image/color"
 	"strings"
 
-	"github.com/raedahgroup/godcr/ui/values"
-
 	"gioui.org/io/key"
-
-	"github.com/raedahgroup/dcrlibwallet"
-	"github.com/raedahgroup/godcr/ui/decredmaterial/editor"
-	"github.com/raedahgroup/godcr/wallet"
-
 	"gioui.org/layout"
 	"gioui.org/text"
+	"gioui.org/unit"
 	"gioui.org/widget"
+
+	"github.com/raedahgroup/dcrlibwallet"
 	"github.com/raedahgroup/godcr/ui/decredmaterial"
+	"github.com/raedahgroup/godcr/ui/decredmaterial/editor"
+	"github.com/raedahgroup/godcr/ui/values"
+	"github.com/raedahgroup/godcr/wallet"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 )
 
@@ -228,16 +227,30 @@ func (pg *createRestore) layout(common pageCommon) {
 				func() {
 					pg.errLabel.Layout(pg.gtx)
 				},
+				func() {
+					layout.Center.Layout(pg.gtx, func() {
+						layout.Flex{Axis: layout.Horizontal}.Layout(pg.gtx,
+							layout.Rigid(func() {
+								pg.addWallet.Layout(pg.gtx, pg.addWalletWidget)
+							}),
+							layout.Rigid(func() {
+								layout.Inset{Left: unit.Dp(5)}.Layout(pg.gtx, func() {
+									pg.hidePasswordModal.Layout(pg.gtx, pg.hidePasswordModalWidget)
+								})
+							}),
+						)
+					})
+				},
 			}
-
-			controlMaterials := []decredmaterial.Button{pg.addWallet, pg.hidePasswordModal}
-			controlWidgets := []*widget.Button{pg.addWalletWidget, pg.hidePasswordModalWidget}
-			pg.createModal.Layout(pg.gtx, w, controlMaterials, controlWidgets)
+			pg.createModal.Layout(pg.gtx, w, 350)
 		}
 
 		if pg.showWarning {
 			pg.warningModal.SetTitle("Reset Seed Input")
 			var msg = "You are about clearing all the seed input fields. Are you sure you want to proceed with this action?"
+			pg.hidePasswordModal.Background = common.theme.Color.Primary
+			pg.hidePasswordModal.Color = color.RGBA{255, 255, 255, 255}
+
 			w := []func(){
 				func() {
 					txt := common.theme.H6(msg)
@@ -245,14 +258,22 @@ func (pg *createRestore) layout(common pageCommon) {
 					txt.Alignment = text.Middle
 					txt.Layout(pg.gtx)
 				},
+				func() {
+					layout.Center.Layout(pg.gtx, func() {
+						layout.Flex{Axis: layout.Horizontal}.Layout(pg.gtx,
+							layout.Rigid(func() {
+								pg.resetSeedFields.Layout(pg.gtx, pg.resetSeedFieldsWidget)
+							}),
+							layout.Rigid(func() {
+								layout.Inset{Left: unit.Dp(5)}.Layout(pg.gtx, func() {
+									pg.hidePasswordModal.Layout(pg.gtx, pg.hidePasswordModalWidget)
+								})
+							}),
+						)
+					})
+				},
 			}
-			pg.hidePasswordModal.Background = common.theme.Color.Primary
-			pg.hidePasswordModal.Color = color.RGBA{255, 255, 255, 255}
-
-			controlMaterials := []decredmaterial.Button{pg.resetSeedFields, pg.hidePasswordModal}
-			controlWidgets := []*widget.Button{pg.resetSeedFieldsWidget, pg.hidePasswordModalWidget}
-
-			pg.warningModal.Layout(pg.gtx, w, controlMaterials, controlWidgets)
+			pg.warningModal.Layout(pg.gtx, w, 350)
 		}
 	})
 }

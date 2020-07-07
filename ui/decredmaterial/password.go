@@ -4,6 +4,7 @@ import (
 	"image/color"
 
 	"gioui.org/layout"
+	"gioui.org/unit"
 	"gioui.org/widget"
 
 	"github.com/raedahgroup/godcr/ui/decredmaterial/editor"
@@ -67,11 +68,22 @@ func (p *Password) Layout(gtx *layout.Context, confirm func([]byte), cancel func
 		func() {
 			p.passwordEditorMaterial.LayoutPasswordEditor(gtx, p.passwordEditorWidget)
 		},
+		func() {
+			layout.Center.Layout(gtx, func() {
+				layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
+					layout.Rigid(func() {
+						p.confirmButtonMaterial.Layout(gtx, p.confirmButtonWidget)
+					}),
+					layout.Rigid(func() {
+						layout.Inset{Left: unit.Dp(5)}.Layout(gtx, func() {
+							p.cancelButtonMaterial.Layout(gtx, p.cancelButtonWidget)
+						})
+					}),
+				)
+			})
+		},
 	}
-
-	controlMaterials := []Button{p.confirmButtonMaterial, p.cancelButtonMaterial}
-	controlWidgets := []*widget.Button{p.confirmButtonWidget, p.cancelButtonWidget}
-	p.modal.Layout(gtx, widgets, controlMaterials, controlWidgets)
+	p.modal.Layout(gtx, widgets, 300)
 }
 
 func (p *Password) updateColors() {
