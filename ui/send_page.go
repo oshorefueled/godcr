@@ -306,7 +306,7 @@ func (pg *SendPage) Layout(common pageCommon) {
 
 	pageContent := []func(){
 		func() {
-			pg.drawSuccessSection(common.gtx)
+			pg.drawAlertSection(common.gtx)
 		},
 		func() {
 			pg.drawCopiedLabelSection(common.gtx)
@@ -344,7 +344,7 @@ func (pg *SendPage) Layout(common pageCommon) {
 	})
 }
 
-func (pg *SendPage) drawSuccessSection(gtx *layout.Context) {
+func (pg *SendPage) drawAlertSection(gtx *layout.Context) {
 	if pg.txHashText != "" {
 		layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
 			layout.Flexed(0.99, func() {
@@ -359,6 +359,8 @@ func (pg *SendPage) drawSuccessSection(gtx *layout.Context) {
 				})
 			}),
 		)
+	} else if pg.sendErrorText != "" {
+		pg.theme.ErrorAlert(gtx, pg.sendErrorText)
 	}
 }
 
