@@ -541,7 +541,7 @@ func (pg *SendPage) drawConfirmationModal(c pageCommon) {
 }
 
 func (pg *SendPage) drawPasswordModal(c pageCommon) {
-	if !(pg.isConfirmationModalOpen && pg.isPasswordModalOpen) {
+	if !pg.isPasswordModalOpen {
 		return
 	}
 	gtx := c.gtx
