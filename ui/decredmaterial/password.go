@@ -83,7 +83,7 @@ func (p *Password) Layout(gtx *layout.Context, confirm func([]byte), cancel func
 			})
 		},
 	}
-	p.modal.Layout(gtx, widgets, 300)
+	p.modal.Layout(gtx, widgets, 1350)
 }
 
 func (p *Password) updateColors() {

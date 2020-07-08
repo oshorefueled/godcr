@@ -552,7 +552,7 @@ func (pg *SendPage) drawConfirmationModal(c pageCommon) {
 			})
 		},
 	}
-	pg.confirmModal.Layout(gtx, w, 500)
+	pg.confirmModal.Layout(gtx, w, 850)
 }
 
 func (pg *SendPage) drawPasswordModal(c pageCommon) {

@@ -12,8 +12,10 @@ type Modal struct {
 	titleLabel     Label
 	titleSeparator *Line
 
+	list            *layout.List
 	overlayColor    color.RGBA
 	backgroundColor color.RGBA
+	button          *widget.Button
 }
 
 func (t *Theme) Modal(title string) *Modal {
@@ -24,8 +26,10 @@ func (t *Theme) Modal(title string) *Modal {
 		titleLabel:     t.H6(title),
 		titleSeparator: t.Line(),
 
+		list:            &layout.List{Axis: layout.Vertical, Alignment: layout.Middle},
 		overlayColor:    overlayColor,
 		backgroundColor: t.Color.Surface,
+		button:          new(widget.Button),
 	}
 }
 
@@ -33,16 +37,16 @@ func (m *Modal) SetTitle(title string) {
 	m.titleLabel.Text = title
 }
 
-// Layout lays out the modal with specified title and width
-// If the passed width is 0, then a default width is used for the modal
-// If not, the modal assumes the width passed to it
-func (m *Modal) Layout(gtx *layout.Context, widgets []func(), maxWidth int) {
+// Layout lays out the widget passed as an argument in a modal using a specified
+// margin. Its left and right margin are respect to 3840 resolution.
+func (m *Modal) Layout(gtx *layout.Context, widgets []func(), margin int) {
 	layout.Stack{}.Layout(gtx,
 		layout.Expanded(func() {
 			fillMax(gtx, m.overlayColor)
-			new(widget.Button).Layout(gtx)
+			m.button.Layout(gtx)
 		}),
 		layout.Stacked(func() {
+			gtx.Constraints.Height.Min = gtx.Constraints.Height.Max
 			widgetFuncs := []func(){
 				func() {
 					m.titleLabel.Layout(gtx)
@@ -53,15 +57,15 @@ func (m *Modal) Layout(gtx *layout.Context, widgets []func(), maxWidth int) {
 				},
 			}
 			widgetFuncs = append(widgetFuncs, widgets...)
+			scaled := 3840 / float32(gtx.Constraints.Width.Max)
+			mg := unit.Px(float32(margin) / scaled)
 
-			sidePadding := (gtx.Constraints.Width.Max - maxWidth) / 2
-			gtx.Constraints.Height.Min = gtx.Constraints.Height.Max
 			layout.Center.Layout(gtx, func() {
 				layout.Inset{
-					Left:  unit.Dp(float32(sidePadding)),
-					Right: unit.Dp(float32(sidePadding)),
+					Left:  mg,
+					Right: mg,
 				}.Layout(gtx, func() {
-					(&layout.List{Axis: layout.Vertical, Alignment: layout.Middle}).Layout(gtx, len(widgetFuncs), func(i int) {
+					m.list.Layout(gtx, len(widgetFuncs), func(i int) {
 						gtx.Constraints.Width.Min = gtx.Constraints.Width.Max
 						fillMax(gtx, m.backgroundColor)
 						layout.UniformInset(unit.Dp(10)).Layout(gtx, widgetFuncs[i])

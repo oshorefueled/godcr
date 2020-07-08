@@ -242,7 +242,7 @@ func (pg *createRestore) layout(common pageCommon) {
 					})
 				},
 			}
-			pg.createModal.Layout(pg.gtx, w, 350)
+			pg.createModal.Layout(pg.gtx, w, 1350)
 		}
 
 		if pg.showWarning {
@@ -273,7 +273,7 @@ func (pg *createRestore) layout(common pageCommon) {
 					})
 				},
 			}
-			pg.warningModal.Layout(pg.gtx, w, 350)
+			pg.warningModal.Layout(pg.gtx, w, 1350)
 		}
 	})
 }
