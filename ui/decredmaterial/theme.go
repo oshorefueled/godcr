@@ -68,6 +68,9 @@ type Theme struct {
 	radioUncheckedIcon    *widget.Icon
 	chevronUpIcon         *widget.Icon
 	chevronDownIcon       *widget.Icon
+
+	PasteText      chan string
+	IsEditorPasted chan bool
 }
 
 func NewTheme(fontCollection []text.FontFace) *Theme {
@@ -94,7 +97,8 @@ func NewTheme(fontCollection []text.FontFace) *Theme {
 	t.radioUncheckedIcon = mustIcon(widget.NewIcon(icons.ToggleRadioButtonUnchecked))
 	t.chevronUpIcon = mustIcon(widget.NewIcon(icons.NavigationExpandLess))
 	t.chevronDownIcon = mustIcon(widget.NewIcon(icons.NavigationExpandMore))
-
+	t.PasteText = make(chan string)
+	t.IsEditorPasted = make(chan bool)
 	return t
 }
 

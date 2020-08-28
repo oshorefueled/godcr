@@ -159,7 +159,6 @@ func (win *Window) Loop(shutdown chan int) {
 			case wallet.BlockConfirmed:
 				win.updateSyncProgress(update.ConfirmedTxn)
 			}
-
 		case e := <-win.window.Events():
 			switch evt := e.(type) {
 			case system.DestroyEvent:
@@ -185,11 +184,17 @@ func (win *Window) Loop(shutdown chan int) {
 				go func() {
 					win.keyEvents <- &evt
 				}()
+			case system.ClipboardEvent:
+				go func() {
+					win.theme.PasteText <- evt.Text
+				}()
 			case nil:
 				// Ignore
 			default:
 				log.Tracef("Unhandled window event %+v\n", e)
 			}
+		case <-win.theme.IsEditorPasted:
+			win.window.ReadClipboard()
 		}
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"gioui.org/op/paint"
 	"gioui.org/widget"
 
-	"github.com/atotto/clipboard"
 	"github.com/raedahgroup/godcr/ui/decredmaterial"
 	"github.com/raedahgroup/godcr/ui/values"
 	"github.com/skip2/go-qrcode"
@@ -17,6 +16,8 @@ import (
 const PageReceive = "receive"
 
 type receivePage struct {
+	w             **Window
+	theme         *decredmaterial.Theme
 	pageContainer layout.List
 
 	isNewAddr, isInfo bool
@@ -42,6 +43,8 @@ func (win *Window) ReceivePage(common pageCommon) layout.Widget {
 	receiveAddressLabel.Color = common.theme.Color.Primary
 	pageInfo := common.theme.Body1("Each time you request a payment, a \nnew address is created to protect \nyour privacy.")
 	page := &receivePage{
+		w:     &win,
+		theme: common.theme,
 		pageContainer: layout.List{
 			Axis:      layout.Vertical,
 			Alignment: layout.Middle,
@@ -235,7 +238,7 @@ func (pg *receivePage) Handle(common pageCommon) {
 	}
 
 	if pg.copyBtn.Button.Clicked() {
-		clipboard.WriteAll(common.info.Wallets[*common.selectedWallet].Accounts[*common.selectedAccount].CurrentAddress)
+		(*pg.w).window.WriteClipboard(common.info.Wallets[*common.selectedWallet].Accounts[*common.selectedAccount].CurrentAddress)
 		pg.addressCopiedLabel.Text = "Address Copied"
 		time.AfterFunc(time.Second*3, func() {
 			pg.addressCopiedLabel.Text = ""

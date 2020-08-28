@@ -7,7 +7,6 @@ import (
 
 	"gioui.org/layout"
 	"gioui.org/widget"
-	"github.com/atotto/clipboard"
 	"github.com/raedahgroup/godcr/ui/decredmaterial"
 	"github.com/raedahgroup/godcr/wallet"
 )
@@ -15,6 +14,8 @@ import (
 const PageSignMessage = "sign_message"
 
 type signMessagePage struct {
+	w          **Window
+	theme      *decredmaterial.Theme
 	container  layout.List
 	wallet     *wallet.Wallet
 	walletID   int
@@ -46,6 +47,8 @@ func (win *Window) SignMessagePage(common pageCommon) layout.Widget {
 	errorLabel.Color = common.theme.Color.Danger
 
 	pg := &signMessagePage{
+		w:     &win,
+		theme: common.theme,
 		container: layout.List{
 			Axis: layout.Vertical,
 		},
@@ -191,9 +194,10 @@ func (pg *signMessagePage) handle(common pageCommon) {
 		}
 	}
 
-	for pg.copyButton.Button.Clicked() {
-		clipboard.WriteAll(pg.signedMessageLabel.Text)
+	if pg.copyButton.Button.Clicked() {
+		(*pg.w).window.WriteClipboard(pg.signedMessageLabel.Text)
 	}
+
 	select {
 	case err := <-pg.errChannel:
 		fmt.Printf("SIGNMESSAGE PAGE ERROR! %v", err)
