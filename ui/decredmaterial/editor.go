@@ -201,12 +201,20 @@ func (e Editor) editor(gtx layout.Context) layout.Dimensions {
 }
 
 func (e Editor) handleEvents() {
-	for e.pasteBtnMaterial.Button.Clicked() {
+	if e.pasteBtnMaterial.Button.Clicked() {
+		e.Editor.Focus()
 		go func() {
-			e.t.IsEditorPasted <- true
+			text := <- e.t.Clipboard
+			e.Editor.SetText(text)
+			e.Editor.Move(e.Editor.Len())
+		}()
+
+		go func() {
+			e.t.ReadClipboard <- ReadClipboard{}
 		}()
 	}
-	for e.clearBtMaterial.Button.Clicked() {
+
+	if e.clearBtMaterial.Button.Clicked() {
 		e.Editor.SetText("")
 	}
 
@@ -220,16 +228,6 @@ func (e Editor) handleEvents() {
 		e.LineColor = e.t.Color.Danger
 	} else {
 		e.LineColor = e.t.Color.Hint
-	}
-
-	if !e.Editor.Focused() {
-		return
-	}
-	select {
-	case txt := <-e.t.PasteText:
-		e.Editor.SetText(txt)
-		e.Editor.Move(e.Editor.Len())
-	default:
 	}
 }
 

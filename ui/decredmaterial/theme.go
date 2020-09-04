@@ -40,6 +40,8 @@ type (
 	D = layout.Dimensions
 )
 
+type ReadClipboard struct {}
+
 type Theme struct {
 	Shaper text.Shaper
 	Base   *material.Theme
@@ -69,8 +71,8 @@ type Theme struct {
 	chevronUpIcon         *widget.Icon
 	chevronDownIcon       *widget.Icon
 
-	PasteText      chan string
-	IsEditorPasted chan bool
+	Clipboard 	   chan string
+	ReadClipboard  chan interface{}
 }
 
 func NewTheme(fontCollection []text.FontFace) *Theme {
@@ -97,8 +99,7 @@ func NewTheme(fontCollection []text.FontFace) *Theme {
 	t.radioUncheckedIcon = mustIcon(widget.NewIcon(icons.ToggleRadioButtonUnchecked))
 	t.chevronUpIcon = mustIcon(widget.NewIcon(icons.NavigationExpandLess))
 	t.chevronDownIcon = mustIcon(widget.NewIcon(icons.NavigationExpandMore))
-	t.PasteText = make(chan string)
-	t.IsEditorPasted = make(chan bool)
+	t.Clipboard = make(chan string)
 	return t
 }
 

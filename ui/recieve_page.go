@@ -16,7 +16,6 @@ import (
 const PageReceive = "receive"
 
 type receivePage struct {
-	w             **Window
 	theme         *decredmaterial.Theme
 	pageContainer layout.List
 
@@ -43,7 +42,6 @@ func (win *Window) ReceivePage(common pageCommon) layout.Widget {
 	receiveAddressLabel.Color = common.theme.Color.Primary
 	pageInfo := common.theme.Body1("Each time you request a payment, a \nnew address is created to protect \nyour privacy.")
 	page := &receivePage{
-		w:     &win,
 		theme: common.theme,
 		pageContainer: layout.List{
 			Axis:      layout.Vertical,
@@ -238,7 +236,9 @@ func (pg *receivePage) Handle(common pageCommon) {
 	}
 
 	if pg.copyBtn.Button.Clicked() {
-		(*pg.w).window.WriteClipboard(common.info.Wallets[*common.selectedWallet].Accounts[*common.selectedAccount].CurrentAddress)
+		go func() {
+			common.clipboard <- WriteClipboard{Text: common.info.Wallets[*common.selectedWallet].Accounts[*common.selectedAccount].CurrentAddress}
+		}()
 		pg.addressCopiedLabel.Text = "Address Copied"
 		time.AfterFunc(time.Second*3, func() {
 			pg.addressCopiedLabel.Text = ""

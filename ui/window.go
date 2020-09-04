@@ -49,6 +49,11 @@ type Window struct {
 	pages                   map[string]layout.Widget
 	walletTabs, accountTabs *decredmaterial.Tabs
 	keyEvents               chan *key.Event
+	clipboard 			    chan interface{}
+}
+
+type WriteClipboard struct {
+	Text string
 }
 
 // CreateWindow creates and initializes a new window with start
@@ -80,7 +85,9 @@ func CreateWindow(wal *wallet.Wallet, decredIcons map[string]image.Image, collec
 	win.states.loading = true
 	win.current = PageOverview
 	win.keyEvents = make(chan *key.Event)
+	win.clipboard = make(chan interface{})
 
+	win.theme.ReadClipboard = win.clipboard
 	win.walletTabs, win.accountTabs = decredmaterial.NewTabs(win.theme), decredmaterial.NewTabs(win.theme)
 	win.walletTabs.Position, win.accountTabs.Position = decredmaterial.Top, decredmaterial.Top
 	win.walletTabs.Separator, win.walletTabs.Separator = false, false
@@ -186,15 +193,20 @@ func (win *Window) Loop(shutdown chan int) {
 				}()
 			case system.ClipboardEvent:
 				go func() {
-					win.theme.PasteText <- evt.Text
+					win.theme.Clipboard <- evt.Text
 				}()
 			case nil:
 				// Ignore
 			default:
 				log.Tracef("Unhandled window event %+v\n", e)
 			}
-		case <-win.theme.IsEditorPasted:
-			win.window.ReadClipboard()
+		case e := <-win.clipboard:
+			switch c := e.(type) {
+			case decredmaterial.ReadClipboard:
+				win.window.ReadClipboard()
+			case WriteClipboard:
+				win.window.WriteClipboard(c.Text)
+			}
 		}
 	}
 }
